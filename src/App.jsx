@@ -35,7 +35,6 @@ import {
   Printer,
   ClipboardList,
   Star,
-  Flag,
   Play,
   ArrowDown,
   Radio,
@@ -339,7 +338,7 @@ const SUS_QUESTIONS = [
 ];
 
 export default function ErgoWearApp() {
-  const [tab, setTab] = useState("dashboard");
+  const [tab, setTab] = useState("overview");
   const [connected, setConnected] = useState(true);
   const [battery, setBattery] = useState(87);
   const [angle, setAngle] = useState(8);
@@ -457,7 +456,6 @@ export default function ErgoWearApp() {
     { id: "riwayat", label: "Riwayat", icon: History },
     { id: "pekerja", label: "Pekerja", icon: Users },
     { id: "alat", label: "Alat", icon: Cpu },
-    { id: "proyek", label: "Proyek", icon: Flag },
     { id: "pengaturan", label: "Pengaturan", icon: Settings },
   ];
 
@@ -579,8 +577,6 @@ export default function ErgoWearApp() {
                 ? "Perbandingan Pekerja"
                 : tab === "alat"
                 ? "Spesifikasi Perangkat"
-                : tab === "proyek"
-                ? "Ringkasan Proyek"
                 : "Pengaturan Ambang Batas"}
             </div>
           </div>
@@ -638,7 +634,6 @@ export default function ErgoWearApp() {
             />
           )}
           {tab === "alat" && <AlatTab thresholds={thresholds} />}
-          {tab === "proyek" && <ProyekTab />}
           {tab === "pengaturan" && (
             <PengaturanTab
               thresholds={thresholds}
@@ -677,48 +672,121 @@ export default function ErgoWearApp() {
 }
 
 /* ---------------------------------------------------------
-   CINEMATIC PRODUCT OVERVIEW — keeps original monitoring intact
+   PROJECT OVERVIEW — judge-facing story, still backed by original app
 --------------------------------------------------------- */
 function OverviewTab({ onOpenDashboard, onOpenDemo }) {
+  const [activeStory, setActiveStory] = useState("masalah");
+  const [openStep, setOpenStep] = useState("deteksi");
+
+  const story = {
+    masalah: {
+      label: "MASALAH",
+      color: C.danger,
+      title: "Postur buruk bukan hanya soal sudut.",
+      text: "Aktivitas manual handling yang repetitif dan postur membungkuk pada pekerja UMKM manufaktur—khususnya subsektor mebel—meningkatkan risiko Musculoskeletal Disorders (MSDs). Proposal menyoroti celah pada korektor postur konvensional yang umumnya membaca sudut secara instan, tanpa memperhitungkan durasi dan frekuensi paparan sebagai bagian dari risiko kumulatif.",
+      cards: [
+        [">70%", "pekerja mebel alami keluhan muskuloskeletal", "Tarwaka, 2015; Pratiwi & Mustakim, 2025"],
+        ["4,19 juta", "unit usaha IKM nasional", "Kemenperin, 2023"],
+        ["149,7 ribu", "unit usaha subsektor furnitur", "Kemenperin/BPS, 2023"],
+        [">40%", "penyakit akibat kerja global adalah MSDs", "ILO, 2021"],
+      ],
+    },
+    dasar: {
+      label: "DASAR", color: C.warn,
+      title: "Mengapa sudut, durasi, dan repetisi dibaca bersama?",
+      text: "Proposal menggunakan trunk flexion sebagai indikator utama beban kerja punggung bawah. Ambang pemantauan difokuskan pada kisaran 20°–30°, sementara deviasi yang berlangsung lebih dari tiga detik menjadi kondisi pemicu vibrotactile feedback. Dasar pengembangan juga mencakup metode REBA/RULA dan kriteria K3 UMKM yang dibahas dalam proposal.",
+      cards: [["20°–30°", "kisaran ambang trunk flexion", "Dasar proposal"],[">3 detik", "durasi paparan pemicu feedback", "Threshold sistem"],["REBA / RULA", "metode dasar evaluasi postur", "Studi literatur"],["Sudut + waktu", "membaca risiko secara kumulatif", "Pendekatan ERGO-WEAR"]],
+    },
+    solusi: {
+      label: "SOLUSI", color: C.safe,
+      title: "ERGO-WEAR mengubah deteksi menjadi intervensi.",
+      text: "ERGO-WEAR mengintegrasikan embedded system, intelligence, dan Internet of Things. BNO055 membaca orientasi tubuh; ESP32-S3 memproses data dan threshold; motor vibrasi memberi peringatan fisik ketika deviasi memenuhi kondisi pemicu; lalu data postur dapat dipantau dan dievaluasi melalui IoT.",
+      cards: [["BNO055", "9-DOF IMU untuk orientasi", "Sensor"],["ESP32-S3", "pemrosesan & komunikasi nirkabel", "Controller"],["Haptic", "motor vibrasi 3V mini", "Actuator"],["IoT", "monitoring dan evaluasi real-time", "Data layer"]],
+    },
+  };
+
+  const steps = [
+    ["deteksi", "01", "Deteksi", "BNO055 membaca orientasi dan pergerakan tubuh secara kontinu."],
+    ["proses", "02", "Analisis", "ESP32-S3 mengolah pitch, roll, yaw serta threshold sudut dan durasi."],
+    ["feedback", "03", "Feedback", "Jika deviasi bertahan lebih dari kondisi pemicu, motor vibrasi memberi pengingat fisik."],
+    ["iot", "04", "Monitoring", "Data yang telah diproses dapat dikirim ke platform IoT untuk pemantauan dan evaluasi berkelanjutan."],
+  ];
+
   return (
-    <div className="max-w-6xl mx-auto space-y-6 fade-in">
-      <section className="relative overflow-hidden rounded-3xl border p-7 md:p-10" style={{ borderColor: C.border, background: `radial-gradient(circle at 75% 20%, ${C.amber}20, transparent 34%), linear-gradient(145deg, ${C.bgElev}, #0f0d0a)` }}>
-        <div className="absolute -right-24 -top-24 w-72 h-72 rounded-full" style={{ background: `${C.amber}10`, filter: "blur(2px)" }} />
-        <div className="relative grid lg:grid-cols-[1.1fr_.9fr] gap-8 items-center">
+    <div className="max-w-6xl mx-auto flex flex-col gap-5 fade-in">
+      {/* HERO */}
+      <section className="relative overflow-hidden rounded-3xl border" style={{ borderColor: C.border, background: `radial-gradient(circle at 78% 18%, ${C.amber}22, transparent 34%), linear-gradient(145deg, ${C.bgElev}, #0d0b09)` }}>
+        <div className="absolute -right-20 -top-24 w-72 h-72 rounded-full border opacity-20" style={{borderColor:C.amber}} />
+        <div className="relative p-6 md:p-9 grid lg:grid-cols-[1.1fr_.9fr] gap-8 items-center">
           <div>
-            <div className="text-[11px] uppercase tracking-[.25em] font-semibold" style={{ color: C.amber }}>SMART POSTURE CORRECTOR · IoT · HAPTIC FEEDBACK</div>
-            <h1 className="oswald mt-4 text-6xl md:text-8xl leading-[.9] tracking-tight">Posture.<br/><span style={{ color: C.amber }}>Measured.</span><br/>Improved.</h1>
-            <p className="mt-6 max-w-2xl text-sm md:text-base leading-7" style={{ color: C.muted }}>ERGO-WEAR mengubah data postur menjadi intervensi nyata: mendeteksi deviasi, mempertimbangkan durasi, memberi feedback getaran, lalu mengirimkan data untuk monitoring ergonomi.</p>
-            <div className="flex flex-wrap gap-3 mt-7">
-              <button onClick={onOpenDashboard} className="px-4 py-3 rounded-xl text-sm font-semibold flex items-center gap-2" style={{ background: C.amber, color: C.bg }}><Activity size={16}/> Buka Live Monitoring</button>
-              <button onClick={onOpenDemo} className="px-4 py-3 rounded-xl border text-sm flex items-center gap-2" style={{ borderColor: C.border, color: C.text }}><Play size={15}/> Lihat Demo Alat</button>
+            <div className="text-[11px] uppercase tracking-[.25em] font-semibold" style={{color:C.amber}}>ERGO-WEAR · GEMASTIK 2026 · UNIVERSITAS TRISAKTI</div>
+            <h1 className="oswald mt-4 text-5xl md:text-7xl leading-[.92]">Postur.<br/><span style={{color:C.amber}}>Measured.</span><br/>Improved.</h1>
+            <p className="mt-5 max-w-2xl text-sm md:text-base leading-7" style={{color:C.muted}}>{TEAM.title}. Sistem wearable yang menghubungkan deteksi postur, feedback haptic, dan monitoring IoT dalam satu closed-loop.</p>
+            <div className="flex flex-wrap gap-3 mt-6">
+              <button onClick={onOpenDashboard} className="px-4 py-3 rounded-xl text-sm font-semibold flex items-center gap-2 transition-transform hover:scale-[1.02]" style={{background:C.amber,color:C.bg}}><Activity size={16}/> Buka Live Monitoring</button>
+              <button onClick={onOpenDemo} className="px-4 py-3 rounded-xl border text-sm flex items-center gap-2" style={{borderColor:C.border,color:C.text}}><Play size={15}/> Lihat Demo Alat</button>
             </div>
           </div>
-          <div className="relative min-h-[330px] rounded-2xl border overflow-hidden flex items-center justify-center" style={{ borderColor: C.border, background: "#0d0b09" }}>
-            <div className="absolute w-64 h-64 rounded-full" style={{ background: `${C.amber}12`, boxShadow: `0 0 80px ${C.amber}18` }} />
-            <div className="relative flex flex-col items-center"><SpineGauge angle={20} color={C.amber} size={270}/><div className="absolute top-5 left-0 px-3 py-2 rounded-xl border text-xs" style={{ borderColor: C.border, background: `${C.bgElev}DD` }}>BNO055 · 9-DOF IMU</div><div className="absolute bottom-10 right-0 px-3 py-2 rounded-xl border text-xs" style={{ borderColor: C.border, background: `${C.bgElev}DD` }}>ESP32-S3 · READY</div></div>
+          <div className="relative min-h-[340px] rounded-2xl border overflow-hidden flex items-center justify-center" style={{borderColor:C.border,background:"#0d0b09"}}>
+            <div className="absolute w-72 h-72 rounded-full" style={{background:`${C.amber}10`,boxShadow:`0 0 100px ${C.amber}18`}} />
+            <div className="relative flex flex-col items-center"><SpineGauge angle={24} color={C.amber} size={270}/><div className="absolute top-6 left-0 px-3 py-2 rounded-xl border text-xs" style={{borderColor:C.border,background:`${C.bgElev}DD`}}>BNO055 · 9-DOF IMU</div><div className="absolute bottom-8 right-0 px-3 py-2 rounded-xl border text-xs" style={{borderColor:C.border,background:`${C.bgElev}DD`}}>ESP32-S3 · READY</div><div className="absolute top-1/2 -right-2 translate-x-full text-[10px] uppercase tracking-widest" style={{color:C.safe}}>IoT connected</div></div>
           </div>
         </div>
       </section>
 
+      {/* FAST STORY */}
       <section className="grid grid-cols-1 md:grid-cols-4 gap-3">
-        {[['01','DETECT','Posture deviation'],['02','PROCESS','Angle + duration'],['03','FEEDBACK','Vibrotactile alert'],['04','CONNECT','IoT monitoring']].map(([n,t,d])=><div key={n} className="rounded-2xl border p-5" style={{borderColor:C.border,background:C.bgElev}}><div className="text-xs" style={{color:C.amber}}>{n}</div><div className="oswald text-xl mt-2">{t}</div><div className="text-xs mt-1" style={{color:C.muted}}>{d}</div></div>)}
+        {[["01","PROBLEM","MSDs & postur repetitif","masalah"],["02","BASIS","Sudut + durasi + frekuensi","dasar"],["03","SOLUTION","Haptic feedback","solusi"],["04","IMPACT","Monitoring IoT","solusi"]].map(([n,t,d,key])=><button key={n} onClick={()=>setActiveStory(key)} className="text-left rounded-2xl border p-5 transition-all hover:-translate-y-1" style={{borderColor:C.border,background:C.bgElev}}><div className="text-xs" style={{color:C.amber}}>{n}</div><div className="oswald text-xl mt-2">{t}</div><div className="text-xs mt-1" style={{color:C.muted}}>{d}</div></button>)}
       </section>
 
+      {/* MASALAH / DASAR / SOLUSI INTERACTIVE */}
       <section className="rounded-3xl border p-6 md:p-8" style={{borderColor:C.border,background:C.bgElev}}>
-        <div className="flex items-end justify-between gap-4 mb-6"><div><div className="text-[11px] uppercase tracking-[.2em]" style={{color:C.amber}}>Closed-loop intelligence</div><h2 className="oswald text-4xl mt-2">From sensor to action.</h2></div><Workflow size={34} style={{color:C.amber}}/></div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-          {[['BNO055','Orientation sensing','Sensor'],['ESP32-S3','Threshold processing','Controller'],['Haptic Motor','Immediate feedback','Actuator'],['IoT','Remote monitoring','Data']].map(([a,b,c],i)=><div key={a} className="relative rounded-2xl border p-5" style={{borderColor:C.border,background:C.bgElev2}}><div className="text-[10px] uppercase tracking-widest" style={{color:C.muted}}>{c}</div><div className="font-semibold mt-2">{a}</div><div className="text-xs mt-1" style={{color:C.muted}}>{b}</div>{i<3&&<ArrowDown className="hidden md:block absolute -right-4 top-1/2 -translate-y-1/2 rotate-[-90deg]" size={18} style={{color:C.amber}}/>}</div>)}
+        <div className="flex flex-wrap gap-2 mb-6">
+          {Object.entries(story).map(([key,item])=><button key={key} onClick={()=>setActiveStory(key)} className="px-4 py-2 rounded-full text-xs font-semibold border transition-all" style={{borderColor:activeStory===key?item.color:C.border,background:activeStory===key?`${item.color}18`:C.bgElev2,color:activeStory===key?item.color:C.muted}}>{item.label}</button>)}
+        </div>
+        <div className="grid lg:grid-cols-5 gap-7">
+          <div className="lg:col-span-3">
+            <div className="text-[11px] uppercase tracking-widest" style={{color:story[activeStory].color}}>01 · {story[activeStory].label}</div>
+            <h2 className="oswald text-3xl md:text-4xl mt-2">{story[activeStory].title}</h2>
+            <p className="text-sm leading-7 mt-4" style={{color:C.muted}}>{story[activeStory].text}</p>
+          </div>
+          <div className="lg:col-span-2 grid grid-cols-2 gap-3">
+            {story[activeStory].cards.map(([v,l,s],i)=><div key={i} className="p-4 rounded-xl border" style={{borderColor:C.border,background:C.bgElev2}}><div className="oswald text-xl" style={{color:story[activeStory].color}}>{v}</div><div className="text-[10px] mt-1 font-semibold">{l}</div><div className="text-[9px] mt-1" style={{color:C.muted}}>{s}</div></div>)}
+          </div>
         </div>
       </section>
 
-      <section id="ergowear-demo" className="rounded-3xl border p-6 md:p-8" style={{borderColor:C.border,background:C.bgElev}}>
-        <div className="text-[11px] uppercase tracking-[.2em]" style={{color:C.amber}}>Device demonstration</div><h2 className="oswald text-4xl mt-2 mb-5">See ERGO-WEAR in action.</h2>
-        <video controls preload="metadata" className="w-full rounded-2xl border" style={{borderColor:C.border,background:'#000'}}><source src="/assets/ergowear-demo.mp4" type="video/mp4"/>Browser tidak mendukung video.</video>
+      {/* WHY / DIFFERENT */}
+      <section className="grid lg:grid-cols-2 gap-5">
+        <Card className="p-6">
+          <div className="text-[11px] uppercase tracking-widest" style={{color:C.amber}}>WHY IT MATTERS</div>
+          <h2 className="oswald text-3xl mt-2">Masalah → celah → intervensi.</h2>
+          <div className="mt-5 flex flex-col gap-2">
+            {[["Korektor konvensional","Deteksi sudut secara instan",C.danger],["Celah yang ditemukan","Durasi & frekuensi belum direpresentasikan",C.warn],["ERGO-WEAR","Penilaian risiko kumulatif + feedback",C.safe]].map(([a,b,c],i)=><div key={i} className="flex items-center gap-3 p-4 rounded-xl" style={{background:C.bgElev2}}><span className="w-2 h-2 rounded-full" style={{background:c}}/><div className="flex-1"><div className="text-xs font-semibold">{a}</div><div className="text-[11px] mt-1" style={{color:C.muted}}>{b}</div></div><ChevronRight size={15} style={{color:c}}/></div>)}
+          </div>
+        </Card>
+        <Card className="p-6">
+          <div className="text-[11px] uppercase tracking-widest" style={{color:C.amber}}>CLOSED-LOOP</div>
+          <h2 className="oswald text-3xl mt-2">Klik tiap tahap untuk melihat perannya.</h2>
+          <div className="mt-4 flex flex-col gap-2">
+            {steps.map(([id,n,title,desc])=>{const open=openStep===id;return <button key={id} onClick={()=>setOpenStep(open?"":id)} className="text-left rounded-xl border p-3 transition-all" style={{borderColor:open?C.amber:C.border,background:open?`${C.amber}12`:C.bgElev2}}><div className="flex items-center gap-3"><span className="oswald" style={{color:C.amber}}>{n}</span><span className="text-xs font-semibold flex-1">{title}</span><ChevronRight size={15} style={{color:open?C.amber:C.muted,transform:open?"rotate(90deg)":"none",transition:"transform .2s"}}/></div>{open&&<div className="ml-8 mt-2 text-[11px] leading-5" style={{color:C.muted}}>{desc}</div>}</button>})}
+          </div>
+        </Card>
       </section>
 
-      <section className="grid md:grid-cols-3 gap-3">
-        {[['Risk kumulatif','Sudut + durasi + frekuensi','Risk-aware'],['Closed-loop feedback','Deteksi → koreksi → evaluasi','Preventive'],['Data-driven K3','Monitoring dan histori sesi','Connected']].map(([a,b,c])=><div className="rounded-2xl border p-6" style={{borderColor:C.border,background:C.bgElev}} key={a}><ShieldCheck size={22} style={{color:C.amber}}/><div className="oswald text-2xl mt-4">{a}</div><p className="text-sm leading-6" style={{color:C.muted}}>{b}</p><span className="text-[10px] uppercase tracking-widest" style={{color:C.amber}}>{c}</span></div>)}
+      {/* COMPARISON */}
+      <section className="rounded-3xl border p-6 md:p-8" style={{borderColor:C.border,background:C.bgElev}}>
+        <div className="flex items-end justify-between gap-4 mb-5"><div><div className="text-[11px] uppercase tracking-widest" style={{color:C.amber}}>POSITIONING</div><h2 className="oswald text-3xl">Apa yang membuat ERGO-WEAR berbeda?</h2></div><span className="text-[10px] uppercase tracking-widest" style={{color:C.muted}}>Proposal comparison</span></div>
+        <div className="grid md:grid-cols-3 gap-3">
+          {COMPARISON_ROWS.map((r,i)=><div key={i} className="rounded-2xl border p-5" style={{borderColor:r.product==="ERGO-WEAR"?C.amber:C.border,background:r.product==="ERGO-WEAR"?`${C.amber}10`:C.bgElev2}}><div className="text-sm font-semibold">{r.product}</div><div className="flex flex-wrap gap-2 mt-4 text-[10px]"><span className="px-2 py-1 rounded-full" style={{background:r.realtime?`${C.safe}18`:`${C.danger}18`,color:r.realtime?C.safe:C.danger}}>Real-time feedback {r.realtime?"✓":"—"}</span><span className="px-2 py-1 rounded-full" style={{background:r.cumulative?`${C.amber}18`:`${C.danger}18`,color:r.cumulative?C.amber:C.danger}}>Risiko kumulatif {r.cumulative?"✓":"—"}</span></div></div>)}
+        </div>
+      </section>
+
+      {/* DEMO */}
+      <section id="ergowear-demo" className="rounded-3xl border p-6 md:p-8" style={{borderColor:C.border,background:C.bgElev}}>
+        <div className="text-[11px] uppercase tracking-widest" style={{color:C.amber}}>PROTOTYPE DEMONSTRATION</div>
+        <div className="flex flex-wrap items-end justify-between gap-4"><h2 className="oswald text-3xl mt-2">Lihat alatnya bekerja.</h2><button onClick={onOpenDashboard} className="text-xs" style={{color:C.amber}}>Buka monitoring →</button></div>
+        <video controls preload="metadata" className="w-full rounded-2xl border mt-5" style={{borderColor:C.border,background:"#000"}}><source src="/assets/ergowear-demo.mp4" type="video/mp4"/>Browser tidak mendukung video.</video>
       </section>
     </div>
   );
@@ -1288,109 +1356,6 @@ function AlatTab({ thresholds }) {
           <ZoneLegend thresholds={thresholds} compact />
         </Card>
       </div>
-    </div>
-  );
-}
-
-/* ---------------------------------------------------------
-   PROYEK TAB — project summary for judges / stakeholders
---------------------------------------------------------- */
-function ProyekTab() {
-  return (
-    <div className="flex flex-col gap-5">
-      <Card className="p-6">
-        <div className="text-[11px] uppercase tracking-widest mb-1" style={{ color: C.muted }}>
-          {TEAM.university} &middot; {TEAM.year}
-        </div>
-        <div className="oswald text-lg mb-2" style={{ color: C.text }}>
-          {TEAM.title}
-        </div>
-        <div className="flex flex-wrap items-center gap-2 mb-3">
-          <Pill color={C.amber} filled>Tim {TEAM.name}</Pill>
-          {TEAM.members.map((m) => (
-            <Pill key={m} color={C.muted}>{m}</Pill>
-          ))}
-        </div>
-        <p className="text-xs" style={{ color: C.muted }}>
-          UMKM manufaktur (khususnya subsektor furnitur) menghadapi risiko Musculoskeletal Disorders akibat
-          postur membungkuk & aktivitas repetitif. Perangkat korektor postur yang ada hanya mendeteksi sudut
-          sesaat, belum memperhitungkan durasi & frekuensi paparan — celah inilah yang dijawab ERGO-WEAR.
-        </p>
-      </Card>
-
-      <Card className="p-5">
-        <div className="oswald text-sm tracking-wide mb-4">MENGAPA INI PENTING</div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {PROBLEM_STATS.map((s, i) => (
-            <div key={i} className="p-3 rounded-xl" style={{ background: C.bgElev2 }}>
-              <div
-                className="oswald"
-                style={{ fontSize: 22, color: C.amber, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}
-              >
-                {s.value}
-              </div>
-              <div className="text-[11px] mt-1" style={{ color: C.text }}>{s.label}</div>
-              <div className="text-[10px] mt-1" style={{ color: C.muted }}>{s.source}</div>
-            </div>
-          ))}
-        </div>
-      </Card>
-
-      <Card className="p-5">
-        <div className="flex items-center gap-2 mb-4">
-          <ClipboardList size={14} style={{ color: C.muted }} />
-          <div className="oswald text-sm tracking-wide">PROGRES PENGERJAAN</div>
-        </div>
-        <div className="flex flex-col gap-3">
-          {PROGRESS_ROWS.map((r, i) => {
-            const color = r.status === "Selesai" ? C.safe : r.status === "Berjalan" ? C.amber : C.muted;
-            return (
-              <div key={i}>
-                <div className="flex items-center justify-between text-xs mb-1">
-                  <span style={{ color: C.text }}>{i + 1}. {r.step}</span>
-                  <Pill color={color}>{r.status} &middot; {r.pct}%</Pill>
-                </div>
-                <div className="h-1.5 rounded-full overflow-hidden" style={{ background: C.bgElev2 }}>
-                  <div className="h-full" style={{ width: `${r.pct}%`, background: color }} />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </Card>
-
-      <Card className="p-5">
-        <div className="oswald text-sm tracking-wide mb-4">POSISI VS PRODUK SEJENIS</div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr style={{ color: C.muted }}>
-                <th className="text-left font-normal pb-2">Produk</th>
-                <th className="text-center font-normal pb-2">Real-time Feedback</th>
-                <th className="text-center font-normal pb-2">Risiko Kumulatif</th>
-              </tr>
-            </thead>
-            <tbody>
-              {COMPARISON_ROWS.map((r, i) => (
-                <tr key={i} className="border-t" style={{ borderColor: C.border }}>
-                  <td
-                    className="py-2.5"
-                    style={{ color: r.product === "ERGO-WEAR" ? C.amber : C.text, fontWeight: r.product === "ERGO-WEAR" ? 600 : 400 }}
-                  >
-                    {r.product}
-                  </td>
-                  <td className="text-center py-2.5">
-                    {r.realtime ? <CheckCircle2 size={15} style={{ color: C.safe, display: "inline" }} /> : "—"}
-                  </td>
-                  <td className="text-center py-2.5">
-                    {r.cumulative ? <CheckCircle2 size={15} style={{ color: C.safe, display: "inline" }} /> : <span style={{ color: C.danger }}>✕</span>}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Card>
     </div>
   );
 }

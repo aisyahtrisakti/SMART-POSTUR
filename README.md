@@ -1,40 +1,40 @@
-# ERGO-WEAR GEMASTIK FINAL
+# ERGO-WEAR — GEMASTIK 2026
 
-Versi ini mempertahankan **logic dan monitoring dari `ergowear-dashboard.jsx` original sebagai fondasi utama**, lalu menambahkan Product Overview cinematic, closed-loop system visualization, dan video demo.
+Versi ini mempertahankan **monitoring original** sebagai inti aplikasi, lalu menempatkan penjelasan proyek pada menu **Overview**.
 
-## Fitur original yang dipertahankan
-- Live posture monitoring dan simulasi sudut
-- Zona Aman / Waspada / Bahaya
-- Durasi deviasi dan threshold
-- Risk score
-- Event timeline
-- Riwayat dan tren
-- Perbandingan pekerja
-- Spesifikasi alat
-- Ringkasan proyek
-- Pengaturan threshold
-- Export CSV / laporan yang sudah ada di source original
-- Device illustration
+## Struktur
 
-## Tambahan visual
-- Product Overview cinematic
-- Closed-loop BNO055 → ESP32-S3 → Haptic → IoT
-- Video demo alat
-- CTA menuju dashboard asli
+- `src/App.jsx` — aplikasi React utama; logic monitoring original tetap dipertahankan.
+- `src/main.jsx` — entry React.
+- `src/styles.css` — base styling.
+- `public/assets/ergowear-demo.mp4` — video demo alat.
+- `package.json` — konfigurasi Vite/React.
 
-## Menjalankan
+## Perubahan UI terbaru
+
+- Menu **Proyek** dihapus.
+- Menu **Overview** menjadi halaman awal.
+- Overview memuat: apa itu ERGO-WEAR, masalah, dasar/urgensi, solusi, closed-loop, perbandingan produk, dan video demo.
+- Bagian masalah/dasar/solusi bersifat interaktif (tab/card).
+- Alur BNO055 → ESP32-S3 → Haptic → IoT dapat dibuka per tahap.
+- Tombol Overview mengarah langsung ke monitoring original.
+- Menu Dasbor, Riwayat, Pekerja, Alat, dan Pengaturan tetap dipertahankan.
+
+## Jalankan lokal
+
 ```bash
 npm install
 npm run dev
 ```
-Buka URL localhost yang diberikan Vite.
 
-## Build hosting
+## Build untuk hosting
+
 ```bash
 npm run build
 ```
-Folder hasil build: `dist/`
+
+Output produksi berada di folder `dist/` dan dapat dideploy ke Vercel/Netlify/static hosting.
 
 ## Catatan
-`public/assets/ergowear-demo.mp4` adalah video demo. Jangan mengubah path tanpa memperbarui source video di `OverviewTab`.
-Tailwind dimuat melalui CDN di `index.html`; saat deploy, koneksi internet diperlukan agar utility classes tampil seperti desain.
+
+Video harus tetap berada di `public/assets/ergowear-demo.mp4` agar player di Overview dapat memuatnya.
