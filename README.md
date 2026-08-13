@@ -16,7 +16,7 @@ Versi ini mempertahankan **monitoring original** sebagai inti aplikasi, lalu men
 - Menu **Overview** menjadi halaman awal.
 - Overview memuat: apa itu ERGO-WEAR, masalah, dasar/urgensi, solusi, closed-loop, perbandingan produk, dan video demo.
 - Bagian masalah/dasar/solusi bersifat interaktif (tab/card).
-- Alur BNO055 → ESP32-S3 → Haptic → IoT dapat dibuka per tahap.
+- Alur MPU6050 → ESP32-S3 → Haptic → IoT dapat dibuka per tahap.
 - Tombol Overview mengarah langsung ke monitoring original.
 - Menu Dasbor, Riwayat, Pekerja, Alat, dan Pengaturan tetap dipertahankan.
 

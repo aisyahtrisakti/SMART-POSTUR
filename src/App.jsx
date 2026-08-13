@@ -700,13 +700,13 @@ function OverviewTab({ onOpenDashboard, onOpenDemo }) {
     solusi: {
       label: "SOLUSI", color: C.safe,
       title: "ERGO-WEAR mengubah deteksi menjadi intervensi.",
-      text: "ERGO-WEAR mengintegrasikan embedded system, intelligence, dan Internet of Things. BNO055 membaca orientasi tubuh; ESP32-S3 memproses data dan threshold; motor vibrasi memberi peringatan fisik ketika deviasi memenuhi kondisi pemicu; lalu data postur dapat dipantau dan dievaluasi melalui IoT.",
-      cards: [["BNO055", "9-DOF IMU untuk orientasi", "Sensor"],["ESP32-S3", "pemrosesan & komunikasi nirkabel", "Controller"],["Haptic", "motor vibrasi 3V mini", "Actuator"],["IoT", "monitoring dan evaluasi real-time", "Data layer"]],
+      text: "ERGO-WEAR mengintegrasikan embedded system, intelligence, dan Internet of Things. MPU6050 membaca orientasi tubuh; ESP32-S3 memproses data dan threshold; motor vibrasi memberi peringatan fisik ketika deviasi memenuhi kondisi pemicu; lalu data postur dapat dipantau dan dievaluasi melalui IoT.",
+      cards: [["MPU6050", "9-DOF IMU untuk orientasi", "Sensor"],["ESP32-S3", "pemrosesan & komunikasi nirkabel", "Controller"],["Haptic", "motor vibrasi 3V mini", "Actuator"],["IoT", "monitoring dan evaluasi real-time", "Data layer"]],
     },
   };
 
   const steps = [
-    ["deteksi", "01", "Deteksi", "BNO055 membaca orientasi dan pergerakan tubuh secara kontinu."],
+    ["deteksi", "01", "Deteksi", "MPU6050 membaca orientasi dan pergerakan tubuh secara kontinu."],
     ["proses", "02", "Analisis", "ESP32-S3 mengolah pitch, roll, yaw serta threshold sudut dan durasi."],
     ["feedback", "03", "Feedback", "Jika deviasi bertahan lebih dari kondisi pemicu, motor vibrasi memberi pengingat fisik."],
     ["iot", "04", "Monitoring", "Data yang telah diproses dapat dikirim ke platform IoT untuk pemantauan dan evaluasi berkelanjutan."],
@@ -729,7 +729,7 @@ function OverviewTab({ onOpenDashboard, onOpenDemo }) {
           </div>
           <div className="relative min-h-[340px] rounded-2xl border overflow-hidden flex items-center justify-center" style={{borderColor:C.border,background:"#0d0b09"}}>
             <div className="absolute w-72 h-72 rounded-full" style={{background:`${C.amber}10`,boxShadow:`0 0 100px ${C.amber}18`}} />
-            <div className="relative flex flex-col items-center"><SpineGauge angle={24} color={C.amber} size={270}/><div className="absolute top-6 left-0 px-3 py-2 rounded-xl border text-xs" style={{borderColor:C.border,background:`${C.bgElev}DD`}}>BNO055 · 9-DOF IMU</div><div className="absolute bottom-8 right-0 px-3 py-2 rounded-xl border text-xs" style={{borderColor:C.border,background:`${C.bgElev}DD`}}>ESP32-S3 · READY</div><div className="absolute top-1/2 -right-2 translate-x-full text-[10px] uppercase tracking-widest" style={{color:C.safe}}>IoT connected</div></div>
+            <div className="relative flex flex-col items-center"><SpineGauge angle={24} color={C.amber} size={270}/><div className="absolute top-6 left-0 px-3 py-2 rounded-xl border text-xs" style={{borderColor:C.border,background:`${C.bgElev}DD`}}>MPU6050 · 9-DOF IMU</div><div className="absolute bottom-8 right-0 px-3 py-2 rounded-xl border text-xs" style={{borderColor:C.border,background:`${C.bgElev}DD`}}>ESP32-S3 · READY</div><div className="absolute top-1/2 -right-2 translate-x-full text-[10px] uppercase tracking-widest" style={{color:C.safe}}>IoT connected</div></div>
           </div>
         </div>
       </section>
@@ -1296,7 +1296,7 @@ function PekerjaTab({ workers, selectedWorker, setSelectedWorker, susResults, se
    ALAT TAB — device illustration & spec sheet (per proposal)
 --------------------------------------------------------- */
 const SPECS = [
-  { label: "Sensor Orientasi", value: "IMU Bosch BNO055 9-DOF", note: "Pitch, roll, yaw — akurasi < ±2°" },
+  { label: "Sensor Orientasi", value: "IMU Bosch MPU6050 9-DOF", note: "Pitch, roll, yaw — akurasi < ±2°" },
   { label: "Mikrokontroler", value: "ESP32-S3", note: "Pemroses utama + WiFi/BLE" },
   { label: "Aktuator", value: "Motor vibrasi coin 3V (×2)", note: "Umpan balik vibrotactile" },
   { label: "Daya", value: "Li-Po 1000 mAh + TP4056", note: "Modul charger berproteksi, tahan ±8 jam" },
@@ -1314,7 +1314,7 @@ function AlatTab({ thresholds }) {
         <DeviceIllustration />
         <div className="grid grid-cols-2 gap-3 mt-4">
           {[
-            { label: "Sensor IMU BNO055", pos: "Titik pusat punggung" },
+            { label: "Sensor IMU MPU6050", pos: "Titik pusat punggung" },
             { label: "ESP32-S3", pos: "Menyatu dalam housing sensor" },
             { label: "Motor vibrasi kiri", pos: "Ujung strap bahu kiri" },
             { label: "Motor vibrasi kanan", pos: "Ujung strap bahu kanan" },
