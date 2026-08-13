@@ -683,7 +683,7 @@ function OverviewTab({ onOpenDashboard, onOpenDemo }) {
       label: "MASALAH",
       color: C.danger,
       title: "Postur buruk bukan hanya soal sudut.",
-      text: "Aktivitas manual handling yang repetitif dan postur membungkuk pada pekerja UMKM manufaktur—khususnya subsektor mebel—meningkatkan risiko Musculoskeletal Disorders (MSDs). Proposal menyoroti celah pada korektor postur konvensional yang umumnya membaca sudut secara instan, tanpa memperhitungkan durasi dan frekuensi paparan sebagai bagian dari risiko kumulatif.",
+      text: "Aktivitas manual handling yang repetitif dan postur membungkuk pada pekerja UMKM manufaktur—khususnya subsektor mebel—meningkatkan risiko Musculoskeletal Disorders (MSDs). Korektor postur konvensional umumnya memberikan peringatan berdasarkan kondisi sudut secara sesaat. Pendekatan ini belum cukup untuk menggambarkan risiko ketika postur tidak ergonomis dipertahankan dalam durasi tertentu atau terjadi berulang kali.",
       cards: [
         [">70%", "pekerja mebel alami keluhan muskuloskeletal", "Tarwaka, 2015; Pratiwi & Mustakim, 2025"],
         ["4,19 juta", "unit usaha IKM nasional", "Kemenperin, 2023"],
@@ -694,8 +694,8 @@ function OverviewTab({ onOpenDashboard, onOpenDemo }) {
     dasar: {
       label: "DASAR", color: C.warn,
       title: "Mengapa sudut, durasi, dan repetisi dibaca bersama?",
-      text: "Proposal menggunakan trunk flexion sebagai indikator utama beban kerja punggung bawah. Ambang pemantauan difokuskan pada kisaran 20°–30°, sementara deviasi yang berlangsung lebih dari tiga detik menjadi kondisi pemicu vibrotactile feedback. Dasar pengembangan juga mencakup metode REBA/RULA dan kriteria K3 UMKM yang dibahas dalam proposal.",
-      cards: [["20°–30°", "kisaran ambang trunk flexion", "Dasar proposal"],[">3 detik", "durasi paparan pemicu feedback", "Threshold sistem"],["REBA / RULA", "metode dasar evaluasi postur", "Studi literatur"],["Sudut + waktu", "membaca risiko secara kumulatif", "Pendekatan ERGO-WEAR"]],
+      text: "Trunk flexion digunakan sebagai salah satu indikator utama untuk memantau beban pada punggung bawah. ERGO-WEAR menggabungkan informasi sudut dan durasi paparan sehingga kondisi postur tidak hanya dinilai dari satu momen, tetapi juga dari lamanya deviasi berlangsung.",
+      cards: [["20°–30°", "kisaran ambang trunk flexion", "Parameter pemantauan"],[">3 detik", "durasi paparan pemicu feedback", "Threshold sistem"],["REBA / RULA", "metode dasar evaluasi postur", "Studi literatur"],["Sudut + waktu", "membaca risiko secara kumulatif", "Pendekatan ERGO-WEAR"]],
     },
     solusi: {
       label: "SOLUSI", color: C.safe,
@@ -719,7 +719,7 @@ function OverviewTab({ onOpenDashboard, onOpenDemo }) {
         <div className="absolute -right-20 -top-24 w-72 h-72 rounded-full border opacity-20" style={{borderColor:C.amber}} />
         <div className="relative p-6 md:p-9 grid lg:grid-cols-[1.1fr_.9fr] gap-8 items-center">
           <div>
-            <div className="text-[11px] uppercase tracking-[.25em] font-semibold" style={{color:C.amber}}>ERGO-WEAR · GEMASTIK 2026 · UNIVERSITAS TRISAKTI</div>
+            <div className="text-[11px] uppercase tracking-[.25em] font-semibold" style={{color:C.amber}}>ERGO-WEAR · SMART POSTURE · UNIVERSITAS TRISAKTI</div>
             <h1 className="oswald mt-4 text-5xl md:text-7xl leading-[.92]">Postur.<br/><span style={{color:C.amber}}>Measured.</span><br/>Improved.</h1>
             <p className="mt-5 max-w-2xl text-sm md:text-base leading-7" style={{color:C.muted}}>{TEAM.title}. Sistem wearable yang menghubungkan deteksi postur, feedback haptic, dan monitoring IoT dalam satu closed-loop.</p>
             <div className="flex flex-wrap gap-3 mt-6">
@@ -776,7 +776,7 @@ function OverviewTab({ onOpenDashboard, onOpenDemo }) {
 
       {/* COMPARISON */}
       <section className="rounded-3xl border p-6 md:p-8" style={{borderColor:C.border,background:C.bgElev}}>
-        <div className="flex items-end justify-between gap-4 mb-5"><div><div className="text-[11px] uppercase tracking-widest" style={{color:C.amber}}>POSITIONING</div><h2 className="oswald text-3xl">Apa yang membuat ERGO-WEAR berbeda?</h2></div><span className="text-[10px] uppercase tracking-widest" style={{color:C.muted}}>Proposal comparison</span></div>
+        <div className="flex items-end justify-between gap-4 mb-5"><div><div className="text-[11px] uppercase tracking-widest" style={{color:C.amber}}>POSITIONING</div><h2 className="oswald text-3xl">Apa yang membuat ERGO-WEAR berbeda?</h2></div><span className="text-[10px] uppercase tracking-widest" style={{color:C.muted}}>Product comparison</span></div>
         <div className="grid md:grid-cols-3 gap-3">
           {COMPARISON_ROWS.map((r,i)=><div key={i} className="rounded-2xl border p-5" style={{borderColor:r.product==="ERGO-WEAR"?C.amber:C.border,background:r.product==="ERGO-WEAR"?`${C.amber}10`:C.bgElev2}}><div className="text-sm font-semibold">{r.product}</div><div className="flex flex-wrap gap-2 mt-4 text-[10px]"><span className="px-2 py-1 rounded-full" style={{background:r.realtime?`${C.safe}18`:`${C.danger}18`,color:r.realtime?C.safe:C.danger}}>Real-time feedback {r.realtime?"✓":"—"}</span><span className="px-2 py-1 rounded-full" style={{background:r.cumulative?`${C.amber}18`:`${C.danger}18`,color:r.cumulative?C.amber:C.danger}}>Risiko kumulatif {r.cumulative?"✓":"—"}</span></div></div>)}
         </div>
@@ -1256,7 +1256,7 @@ function PekerjaTab({ workers, selectedWorker, setSelectedWorker, susResults, se
           </button>
         </div>
         <p className="text-xs mb-3" style={{ color: C.muted }}>
-          Metode System Usability Scale (SUS) — sesuai rencana evaluasi pada proposal.
+          Metode System Usability Scale (SUS) untuk mengevaluasi kemudahan penggunaan sistem.
         </p>
 
         {workerSus.length > 0 && (
